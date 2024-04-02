@@ -4,4 +4,5 @@ This application follows a layered structure i.e from endpoint to service to rep
 different type of entity relationships are performed.
 exceptions are handled through global exceptional handlers.
 Loggers are provided for detailed analysis.
-using the endpoints, basic crud manipulations can be done through postman.
+using the endpoints, basic crud manipulations can be done through postman. 
+
