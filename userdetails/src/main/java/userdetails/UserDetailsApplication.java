@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class UserDetailsApplication {
 
 	public static void main(String[] args) {
+		System.out.println("hai");
 		SpringApplication.run(UserDetailsApplication.class, args);
 	}
 }
