@@ -59,7 +59,7 @@ public class User {
     @Column(name = "DOB")
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     Date dob;
-    @Column(name = "GMAIL")
+    //@Column(name = "GMAIL")
     //@Email(message = "valid mail should be provided")
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "user",fetch = FetchType.EAGER)
     private List<Gmail> gmail = new ArrayList<>();

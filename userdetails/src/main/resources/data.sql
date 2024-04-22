@@ -5,12 +5,12 @@ create table users(
     height double precision,
     Dob date,
     isDeleted boolean,
-    gmail varchar(35),
+    -- gmail varchar(35),
     mobile bigint
 );
 
-    insert into users(userName,age,height,Dob,isDeleted,gmail,mobile)
-    values('alex',23,156.2,'2000-09-14',TRUE,'alex@gmail.com',9949260690);
+    -- insert into users(userName,age,height,Dob,isDeleted,gmail,mobile)
+    -- values('alex',23,156.2,'2000-09-14',TRUE,'alex@gmail.com',9949260690);
 
 create table roles(
     roleId int auto_increment primary key,
