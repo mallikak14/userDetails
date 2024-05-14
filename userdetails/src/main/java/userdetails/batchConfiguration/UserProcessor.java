@@ -1,4 +1,4 @@
-package userdetails.configuration;
+package userdetails.batchConfiguration;
 
 import org.springframework.batch.item.ItemProcessor;
 

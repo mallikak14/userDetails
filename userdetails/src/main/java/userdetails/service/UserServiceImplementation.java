@@ -1,9 +1,12 @@
 package userdetails.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import userdetails.Repos.GmailRepo;
@@ -13,6 +16,7 @@ import userdetails.entities.User;
 import userdetails.exceptions.GmailNotProvided;
 import userdetails.exceptions.UserAlreadyExists;
 import userdetails.exceptions.UserNotFoundException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,11 +28,16 @@ public class UserServiceImplementation implements UserService {
     GmailRepo grepo;
 
     Logger logger = LoggerFactory.getLogger(UserServiceImplementation.class);
-
+    
+   @Scheduled(cron="0 * * * * *")
     @Override
     public List<User> getAllUsers() {
         logger.info("getting all users");
         List<User> userList = repo.findAll();
+        System.out.println("fetch service call in"+new Date().toString());
+        System.out.println("no of records fetvhed "+userList.size());
+        System.out.println("thread name: "+Thread.currentThread().getName());
+        logger.info("users: {}",userList);
         if (!userList.isEmpty())
             return userList;
         return List.of();
@@ -50,7 +59,6 @@ public class UserServiceImplementation implements UserService {
             throw userNotFoundException;
         }
     }
-
     @Transactional
     @Override
     public void add(User u) {
@@ -119,5 +127,14 @@ public class UserServiceImplementation implements UserService {
             return true;
         return false;
     }
+    @Scheduled(initialDelay = 10000,fixedDelay = 8000)//fixedRate = 10000)
+    public void startScheduleMethod(){
+        System.out.println("startind schedule"+new Date()+Thread.currentThread().getName());
+    }
 
+    @Scheduled(fixedDelayString = "${fixedDelay.in.milliseconds}")
+    @Async
+    public void startScheduleMethod2(){
+        System.out.println("startind schedule"+new Date()+Thread.currentThread().getName());
+    }
 }

@@ -1,7 +1,7 @@
 package userdetails.controllers;
-
 import java.util.List;
 import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -30,22 +30,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
-
-//@EnableOAuth2Client
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("users")
 public class UserController {
     @Autowired
     UserService service;
-
     Logger logger=LoggerFactory.getLogger(UserController.class);
 
     private final JobLauncher jobLauncher;
     private final Job job;
     
-
-
     @GetMapping("")
     public ResponseEntity<?> getUsers() {
         List<User> userList = service.getAllUsers();
@@ -93,5 +88,4 @@ public class UserController {
             e.printStackTrace();
         }
     }
-
 }
