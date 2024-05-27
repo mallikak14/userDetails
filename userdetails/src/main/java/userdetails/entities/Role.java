@@ -2,6 +2,9 @@ package userdetails.entities;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import org.springframework.data.redis.core.RedisHash;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

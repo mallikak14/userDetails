@@ -1,6 +1,8 @@
 package userdetails.entities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -28,6 +30,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -39,8 +42,9 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Data
 @Table(name = "users")
-public class User {
+public class User implements Serializable{// implements UserDetails {
     @Id
     @Column(name = "USERID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,6 +63,14 @@ public class User {
     @Column(name = "DOB")
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     Date dob;
+    public User(@NotBlank(message = "username should be provided") String userName, String password) {
+        this.userName = userName;
+        this.password = password;
+    }
+
+    @Column(name="PASSWORD")
+    String password;
+
     //@Column(name = "GMAIL")
     //@Email(message = "valid mail should be provided")
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "user",fetch = FetchType.EAGER)
@@ -92,5 +104,39 @@ public class User {
         this.dob = dob;
         this.mobile = mobile;
     }
-
 }
+    // @Override
+    // public Collection<? extends GrantedAuthority> getAuthorities() {
+    //     return List.of(new SimpleGrantedAuthority(role.getRoleName()));
+    // }
+
+    // @Override
+    // public String getPassword() {
+    //    return password;
+    // }
+
+    // @Override
+    // public String getUsername() {
+    //     return userName;
+    // }
+
+    // @Override
+    // public boolean isAccountNonExpired() {
+    //    return true;
+    // }
+
+    // @Override
+    // public boolean isAccountNonLocked() {
+    //    return true;
+    // }
+
+    // @Override
+    // public boolean isCredentialsNonExpired() {
+    //    return true;
+    // }
+
+    // @Override
+    // public boolean isEnabled() {
+    //     return true;
+
+    // }

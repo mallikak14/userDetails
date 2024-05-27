@@ -1,5 +1,7 @@
 package userdetails.controllers;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -15,12 +17,13 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import userdetails.entities.User;
+import userdetails.exceptions.UserNotFoundException;
+import userdetails.jwt.JwtGenerator;
 import userdetails.service.UserService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,7 +45,9 @@ public class UserController {
     private final JobLauncher jobLauncher;
     private final Job job;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @Autowired
+    JwtGenerator jwtGenerator;
+
     @GetMapping("")
     public ResponseEntity<?> getUsers() {
         List<User> userList = service.getAllUsers();
@@ -50,26 +55,24 @@ public class UserController {
         //String message = !userList.isEmpty() ? "users data" + userList : "Notfound";
         return ResponseEntity.status(status).body(userList);
     }
-    @PreAuthorize("hasRole('ADMIN')")
+
     @GetMapping("/{userid}")
     public ResponseEntity<?> getUserById(@PathVariable int userid) {
         Optional<User> user = service.getUserById(userid);
         return ResponseEntity.ok(user);
     }
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+
     @PostMapping("")
     public ResponseEntity<?> addUser(@RequestBody @Valid User u) {
             service.add(u);
             return ResponseEntity.ok("user added successfully") ;
     } 
     
-    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{userid}")
     public ResponseEntity<?> updateUser(@RequestBody User u, @PathVariable int userid) {
         service.update(u, userid);
         return ResponseEntity.ok("user updated");
     }
-    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{userid}")
     public ResponseEntity<?> deleteUserById(@PathVariable int userid) {
         service.delete(userid);
@@ -90,4 +93,21 @@ public class UserController {
             e.printStackTrace();
         }
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody User user) {
+        Map<String,String> tokenDetails=new HashMap<>();
+       if(user.getPassword()==null && user.getUserName()==null){
+        throw new UserNotFoundException();
+       }
+        User userDetails=service.getUserByNameAndPassword(user);
+        if(userDetails!=null){
+            tokenDetails=jwtGenerator.generateToken(userDetails);
+        }
+        else{
+            throw new UserNotFoundException();
+        }
+        return new ResponseEntity<>(tokenDetails,HttpStatus.OK);
+    }
+    
 }

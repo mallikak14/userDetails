@@ -51,7 +51,7 @@ public class BatchConfig {
         DelimitedLineTokenizer lineTokenizer = new DelimitedLineTokenizer();
         lineTokenizer.setDelimiter(",");
         lineTokenizer.setStrict(false);
-        lineTokenizer.setNames("userid","username","age","height","isdeleted","dob","mobile");
+        lineTokenizer.setNames("userid","username","age","height","isdeleted","dob","mobile","password");
         BeanWrapperFieldSetMapper<User> fieldSetMapper = new BeanWrapperFieldSetMapper<>();
         fieldSetMapper.setTargetType(User.class);
 

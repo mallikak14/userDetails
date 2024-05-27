@@ -12,20 +12,23 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import static org.springframework.security.config.Customizer.withDefaults;
-
+import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
-	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((req) -> req.requestMatchers("/users/**").authenticated())
-        .httpBasic(withDefaults());	
-        http.csrf(csrf -> csrf.disable());
-		return http.build();
-	 }
+// @Bean
+// 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//       http .csrf((protection) -> protection.ignoringRequestMatchers(toH2Console())).headers((header) -> header.frameOptions().sameOrigin() );;
+//       http.authorizeHttpRequests(auth->auth
+//      .requestMatchers(toH2Console()).permitAll());
+//    //   .requestMatchers(HttpMethod.POST).hasAuthority("USER").requestMatchers(HttpMethod.GET).hasAuthority("ADMIN"))
+//       //.anyRequest().authenticated())
+//        // .httpBasic(withDefaults()));
+//         return http.build();
+//     }
+
 
     @Bean
     public UserDetailsService userDetialsService(PasswordEncoder passwordEncoder){
@@ -49,5 +52,5 @@ public class SecurityConfiguration {
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
-}
 
+ }

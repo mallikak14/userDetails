@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -21,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Service
+@EnableCaching
 public class UserServiceImplementation implements UserService {
     @Autowired
     UserRepo repo;
@@ -31,6 +36,7 @@ public class UserServiceImplementation implements UserService {
     
    @Scheduled(cron="0 * * * * *")
     @Override
+    @Cacheable(value="User")
     public List<User> getAllUsers() {
         logger.info("getting all users");
         List<User> userList = repo.findAll();
@@ -44,9 +50,11 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
+    @Cacheable(value="User",key="#userid")
     public Optional<User> getUserById(int userid) {
         try {
             logger.debug("id {}", userid);
+            logger.info("users: with Id {}",userid);
             Optional<User> user = repo.findById(userid);
             logger.debug("response{}", user);
             if (user.isPresent()) {
@@ -86,6 +94,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
+    @CacheEvict(value="User",key="#userid")
     public void delete(int userid) {
         try {
             Optional<User> data = repo.findById(userid);
@@ -103,6 +112,7 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     @Transactional
+    @CachePut(value="User",key="#userid")
     public void update(User updateuser, int userid) {
         try {
             var data = repo.findById(userid);
@@ -122,19 +132,23 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public Boolean findByUserName(String username) {
-        User u = repo.findByUserName(username);
+        Optional<User> u = repo.findByUserName(username);
         if (u != null)
             return true;
         return false;
     }
-    @Scheduled(initialDelay = 10000,fixedDelay = 8000)//fixedRate = 10000)
+    //@Scheduled(initialDelay = 10000,fixedDelay = 8000)//fixedRate = 10000)
     public void startScheduleMethod(){
         System.out.println("startind schedule"+new Date()+Thread.currentThread().getName());
     }
 
-    @Scheduled(fixedDelayString = "${fixedDelay.in.milliseconds}")
+    //@Scheduled(fixedDelayString = "${fixedDelay.in.milliseconds}")
     @Async
     public void startScheduleMethod2(){
         System.out.println("startind schedule"+new Date()+Thread.currentThread().getName());
+    }
+
+    public User getUserByNameAndPassword(User user){
+        return repo.findByUserNameOrPassword(user.getUserName(),user.getPassword());
     }
 }

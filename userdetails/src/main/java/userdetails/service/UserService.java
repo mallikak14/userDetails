@@ -18,5 +18,7 @@ public interface UserService {
 
     public Boolean findByUserName(String username);
 
+    public User getUserByNameAndPassword(User user);
+
 
 }

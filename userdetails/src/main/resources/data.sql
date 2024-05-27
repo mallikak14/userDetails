@@ -7,18 +7,19 @@ create table users(
     Dob date,
     isDeleted boolean,
     -- gmail varchar(35),
-    mobile bigint
+    mobile bigint,
+   password varchar(300)
 );
 
-    insert into users(userName,age,height,Dob,isDeleted,mobile)
-    values('alex',23,156.2,'2000-09-14',TRUE,9949260690);
+    insert into users(userName,age,height,Dob,isDeleted,mobile,password)
+    values('alex',23,156.2,'2000-09-14',TRUE,9949260690,'alex123');
 -- drop table roles;
 create table roles(
     roleId int auto_increment primary key,
     roleName varchar(20)
 );
-insert into roles(roleName)
-values('user');
+-- insert into roles(roleName)
+-- values('user');
 -- drop table mails;
 create table mails(
     gid int auto_increment primary key,
