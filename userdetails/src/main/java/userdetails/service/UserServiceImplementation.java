@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Service
-@EnableCaching
+// @EnableCaching
 public class UserServiceImplementation implements UserService {
     @Autowired
     UserRepo repo;
@@ -36,7 +36,7 @@ public class UserServiceImplementation implements UserService {
     
    @Scheduled(cron="0 * * * * *")
     @Override
-    @Cacheable(value="User")
+    // @Cacheable(value="User")
     public List<User> getAllUsers() {
         logger.info("getting all users");
         List<User> userList = repo.findAll();
@@ -50,7 +50,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    @Cacheable(value="User",key="#userid")
+    // @Cacheable(value="User",key="#userid")
     public Optional<User> getUserById(int userid) {
         try {
             logger.debug("id {}", userid);
@@ -94,7 +94,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    @CacheEvict(value="User",key="#userid")
+    // @CacheEvict(value="User",key="#userid")
     public void delete(int userid) {
         try {
             Optional<User> data = repo.findById(userid);
@@ -112,7 +112,7 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     @Transactional
-    @CachePut(value="User",key="#userid")
+    // @CachePut(value="User",key="#userid")
     public void update(User updateuser, int userid) {
         try {
             var data = repo.findById(userid);

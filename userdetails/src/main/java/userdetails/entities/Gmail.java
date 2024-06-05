@@ -1,7 +1,5 @@
 package userdetails.entities;
 
-import org.springframework.data.redis.core.RedisHash;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;

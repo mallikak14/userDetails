@@ -23,7 +23,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import userdetails.entities.User;
 import userdetails.exceptions.UserNotFoundException;
-import userdetails.jwt.JwtGenerator;
+// import userdetails.jwt.JwtGenerator;
 import userdetails.service.UserService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -45,8 +45,8 @@ public class UserController {
     private final JobLauncher jobLauncher;
     private final Job job;
 
-    @Autowired
-    JwtGenerator jwtGenerator;
+    // @Autowired
+    // JwtGenerator jwtGenerator;
 
     @GetMapping("")
     public ResponseEntity<?> getUsers() {
@@ -94,20 +94,20 @@ public class UserController {
         }
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody User user) {
-        Map<String,String> tokenDetails=new HashMap<>();
-       if(user.getPassword()==null && user.getUserName()==null){
-        throw new UserNotFoundException();
-       }
-        User userDetails=service.getUserByNameAndPassword(user);
-        if(userDetails!=null){
-            tokenDetails=jwtGenerator.generateToken(userDetails);
-        }
-        else{
-            throw new UserNotFoundException();
-        }
-        return new ResponseEntity<>(tokenDetails,HttpStatus.OK);
-    }
+    // @PostMapping("/login")
+    // public ResponseEntity<?> loginUser(@RequestBody User user) {
+    //     Map<String,String> tokenDetails=new HashMap<>();
+    //    if(user.getPassword()==null && user.getUserName()==null){
+    //     throw new UserNotFoundException();
+    //    }
+    //     User userDetails=service.getUserByNameAndPassword(user);
+    //     if(userDetails!=null){
+    //         tokenDetails=jwtGenerator.generateToken(userDetails);
+    //     }
+    //     else{
+    //         throw new UserNotFoundException();
+    //     }
+    //     return new ResponseEntity<>(tokenDetails,HttpStatus.OK);
+    // }
     
 }
