@@ -9,7 +9,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
@@ -33,28 +32,28 @@ public class UserServiceImplementation implements UserService {
     GmailRepo grepo;
 
     Logger logger = LoggerFactory.getLogger(UserServiceImplementation.class);
-    
-   @Scheduled(cron="0 * * * * *")
+
+    @Scheduled(cron = "0 * * * * *")
     @Override
-    @Cacheable(value="User")
+    @Cacheable(value = "User")
     public List<User> getAllUsers() {
         logger.info("getting all users");
         List<User> userList = repo.findAll();
-        System.out.println("fetch service call in"+new Date().toString());
-        System.out.println("no of records fetvhed "+userList.size());
-        System.out.println("thread name: "+Thread.currentThread().getName());
-        logger.info("users: {}",userList);
+        System.out.println("fetch service call in" + new Date().toString());
+        System.out.println("no of records fetvhed " + userList.size());
+        System.out.println("thread name: " + Thread.currentThread().getName());
+        logger.info("users: {}", userList);
         if (!userList.isEmpty())
             return userList;
         return List.of();
     }
 
     @Override
-    @Cacheable(value="User",key="#userid")
+    @Cacheable(value = "User", key = "#userid")
     public Optional<User> getUserById(int userid) {
         try {
             logger.debug("id {}", userid);
-            logger.info("users: with Id {}",userid);
+            logger.info("users: with Id {}", userid);
             Optional<User> user = repo.findById(userid);
             logger.debug("response{}", user);
             if (user.isPresent()) {
@@ -67,6 +66,7 @@ public class UserServiceImplementation implements UserService {
             throw userNotFoundException;
         }
     }
+
     @Transactional
     @Override
     public void add(User u) {
@@ -74,15 +74,15 @@ public class UserServiceImplementation implements UserService {
             logger.info("checking if the user exists and adding");
             if (findByUserName(u.getUserName())) {
                 throw new UserAlreadyExists();
-            }
-            if (u.getGmail() != null && !u.getGmail().isEmpty()) {
-                for (Gmail gmail : u.getGmail()) {
-                    gmail.setUser(u);
-                    grepo.save(gmail);
-                }
-                repo.save(u);
             } else {
-                throw new GmailNotProvided();
+                if (u.getGmail() == null || u.getGmail().isEmpty()) {
+                    throw new GmailNotProvided("Gmail list cannot be empty or null");
+                } else {
+                    for (Gmail gmail : u.getGmail()) {
+                        gmail.setUser(u);
+                        grepo.save(gmail);
+                    }
+                    repo.save(u);                }
             }
         } catch (UserAlreadyExists userAlreadyExists) {
             logger.error("user with same name already exists", userAlreadyExists);
@@ -94,7 +94,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    @CacheEvict(value="User",key="#userid")
+    @CacheEvict(value = "User", key = "#userid")
     public void delete(int userid) {
         try {
             Optional<User> data = repo.findById(userid);
@@ -102,7 +102,7 @@ public class UserServiceImplementation implements UserService {
             if (data.isPresent()) {
                 repo.deleteById(userid);
             } else {
-                throw new UserNotFoundException();
+                throw new UserNotFoundException("user not found");
             }
         } catch (UserNotFoundException userNotFoundException) {
             logger.error("user with specified id is not present", userNotFoundException);
@@ -112,7 +112,7 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     @Transactional
-    @CachePut(value="User",key="#userid")
+    @CachePut(value = "User", key = "#userid")
     public void update(User updateuser, int userid) {
         try {
             var data = repo.findById(userid);
@@ -133,22 +133,21 @@ public class UserServiceImplementation implements UserService {
     @Override
     public Boolean findByUserName(String username) {
         Optional<User> u = repo.findByUserName(username);
-        if (u != null)
-            return true;
-        return false;
-    }
-    //@Scheduled(initialDelay = 10000,fixedDelay = 8000)//fixedRate = 10000)
-    public void startScheduleMethod(){
-        System.out.println("startind schedule"+new Date()+Thread.currentThread().getName());
+        return u.isPresent();
     }
 
-    //@Scheduled(fixedDelayString = "${fixedDelay.in.milliseconds}")
-    @Async
-    public void startScheduleMethod2(){
-        System.out.println("startind schedule"+new Date()+Thread.currentThread().getName());
-    }
+    // @Scheduled(initialDelay = 10000,fixedDelay = 8000)//fixedRate = 10000)
+    // public void startScheduleMethod() {
+    //     System.out.println("startind schedule" + new Date() + Thread.currentThread().getName());
+    // }
 
-    public User getUserByNameAndPassword(User user){
-        return repo.findByUserNameOrPassword(user.getUserName(),user.getPassword());
-    }
+    // // @Scheduled(fixedDelayString = "${fixedDelay.in.milliseconds}")
+    // @Async
+    // public void startScheduleMethod2() {
+    //     System.out.println("startind schedule" + new Date() + Thread.currentThread().getName());
+    // }
+
+    // public User getUserByNameAndPassword(User user){
+    // return repo.findByUserNameOrPassword(user.getUserName(),user.getPassword());
+    // }
 }

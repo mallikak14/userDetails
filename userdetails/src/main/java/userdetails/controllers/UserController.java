@@ -1,9 +1,7 @@
 package userdetails.controllers;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
+import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -18,14 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import userdetails.entities.User;
-import userdetails.exceptions.UserNotFoundException;
-// import userdetails.jwt.JwtGenerator;
 import userdetails.service.UserService;
-
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -65,7 +59,7 @@ public class UserController {
     @PostMapping("")
     public ResponseEntity<?> addUser(@RequestBody @Valid User u) {
             service.add(u);
-            return ResponseEntity.ok("user added successfully") ;
+            return ResponseEntity.ok("user added successfully");
     } 
     
     @PutMapping("/{userid}")
@@ -73,26 +67,27 @@ public class UserController {
         service.update(u, userid);
         return ResponseEntity.ok("user updated");
     }
+    
     @DeleteMapping("/{userid}")
     public ResponseEntity<?> deleteUserById(@PathVariable int userid) {
         service.delete(userid);
         return ResponseEntity.ok("user deleted");
     }
 
-    @GetMapping("/load")
-    public void importCsvToDBJob() {
-        JobParameters jobParameters = new JobParametersBuilder()
-                .addLong("startAt", System.currentTimeMillis())
-                .toJobParameters();
-        try {
-            jobLauncher.run(job, jobParameters);
-        } catch (JobExecutionAlreadyRunningException
-                 | JobRestartException
-                 | JobInstanceAlreadyCompleteException
-                 | JobParametersInvalidException e) {
-            e.printStackTrace();
-        }
-    }
+    // @GetMapping("/load")
+    // public void importCsvToDBJob() {
+    //     JobParameters jobParameters = new JobParametersBuilder()
+    //             .addLong("startAt", System.currentTimeMillis())
+    //             .toJobParameters();
+    //     try {
+    //         jobLauncher.run(job, jobParameters);
+    //     } catch (JobExecutionAlreadyRunningException
+    //              | JobRestartException
+    //              | JobInstanceAlreadyCompleteException
+    //              | JobParametersInvalidException e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 
     // @PostMapping("/login")
     // public ResponseEntity<?> loginUser(@RequestBody User user) {

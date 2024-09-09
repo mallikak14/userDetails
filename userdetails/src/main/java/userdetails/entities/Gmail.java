@@ -30,7 +30,8 @@ public class Gmail {
     int gmailid;
     @Column(name="GMAIL")
     String gmail;
-    @JsonIgnore
+    @JsonIgnore  
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name="USERID")
     private User user;

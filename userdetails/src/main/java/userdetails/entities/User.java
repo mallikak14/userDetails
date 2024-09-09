@@ -62,9 +62,17 @@ public class User implements Serializable{// implements UserDetails {
     @Column(name = "DOB")
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     Date dob;
-    public User(@NotBlank(message = "username should be provided") String userName, String password) {
+    public User(int userId, @NotBlank(message = "username should be provided") String userName, int age,
+            @NotNull(message = "height should be provided") double height,
+            @NotNull(message = "isdeleted should be provided") boolean isdeleted, Date dob,
+            @Digits(integer = 10, fraction = 0) long mobile) {
+        this.userId = userId;
         this.userName = userName;
-        this.password = password;
+        this.age = age;
+        this.height = height;
+        this.isdeleted = isdeleted;
+        this.dob = dob;
+        this.mobile = mobile;
     }
 
     @Column(name="PASSWORD")
@@ -72,6 +80,8 @@ public class User implements Serializable{// implements UserDetails {
 
     //@Column(name = "GMAIL")
     //@Email(message = "valid mail should be provided")
+    @JsonIgnore  
+    @ToString.Exclude
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "user",fetch = FetchType.EAGER)
     private List<Gmail> gmail = new ArrayList<>();
 
